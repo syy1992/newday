@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{margin: 0;padding: 0;font-family: "微软雅黑";}
+        #loading{position: absolute;height: 550px;width: 800px;top:0;left: 0;display: none;text-align: center;line-height: 550px;}
+        #box{position: relative; margin: 200px auto;height: 550px;width: 800px;background-image:url("weather/xy.gif"); background-repeat:no-repeat;background-size:cover ; border-radius: 7px;}
+        .header{margin-top: 10px}
+        span{color: #fff;margin-left: 50px;margin-right: 20px;line-height: 40px;font-size: 18px}
+        select{width: 100px;height: 26px;border: none;font-size: 18px}
+        button{height: 26px;width: 50px;border: none;font-size: 18px}
+        .today{margin: 30px}
+        h3{color: #fff;font-size: 40px;font-weight: normal;}
+        h5{color: #ddd;font-size: 14px;font-weight: normal;}
+        h4{color: #fff;font-size: 14px;font-weight: normal;height: 20px; background: mediumseagreen;line-height: 20px;border-radius: 3px;padding:0 5px 0 5px;display: inline-block;}
+        i{color: #fff;font-size: 14px;font-weight: normal;font-style: normal;}
+        h2{color: #fff;font-size: 80px;font-weight: normal;}
+        h2 em{font-size: 30px;font-style: normal;}
+        .tomorrow{width: 150px; height: 200px;border-radius: 5px; float: left;margin:20px 4px 0 4px;text-align: center;background:rgba(255,255,255,.3);}
+        .tomorrow p{color: #fff;font-size: 14px;font-weight: normal;line-height: 30px}
+        .tomorrow h6{color: #fff;font-size: 22px;font-weight: normal;line-height: 30px;margin: 20px 0 5px 0}
+        .tomorrow .wendu{color: #fff;font-size: 14px;font-weight: normal;margin: 0 10px 0 10px;border-top: 1px solid #dddddd;line-height: 36px}
+    </style>
+    <script src="js/util.js"></script>
+    <script>
+        window.onload = function () {
+            function run(){
+                var url = "http://apis.baidu.com/heweather/weather/free?city=";
+                var city=document.getElementById("city").value;
+                url=url+city;
+                document.getElementById("loading").style.display="block";
+                var xhr=new XMLHttpRequest();
+                xhr.open("GET",url,true);
+                xhr.onreadystatechange=function(){
+                    if(xhr.readyState==4 && xhr.status==200){
+                        document.getElementById("loading").style.display="none";
+                        var data=JSON.parse(xhr.responseText);
+                        var area=data["HeWeather data service 3.0"][0].basic.city;
+                        document.getElementById("area").innerHTML=area;
+                        var time=data["HeWeather data service 3.0"][0].basic.update.loc;
+                        document.getElementById("time").innerHTML=time+"发布";
+                        var quality=data["HeWeather data service 3.0"][0].aqi.city.qlty;
+                        var quality2=data["HeWeather data service 3.0"][0].aqi.city.aqi;
+                        document.getElementById("quality").innerHTML="空气"+quality+'&nbsp'+quality2;
+                        if(quality=="优"){
+                            document.getElementById("quality").style.backgroundColor="mediumseagreen";
+                        }else if(quality=="良"){
+                            document.getElementById("quality").style.backgroundColor="#e1bf04";
+                        }else{
+                            document.getElementById("quality").style.backgroundColor="#df0000";
+                        };
+                        var tmp=data["HeWeather data service 3.0"][0].now.tmp;
+                        var sub=data["HeWeather data service 3.0"][0].now.cond.txt;
+                        document.getElementById("tmp").innerHTML=tmp+"°"+"<em> "+sub+" </em>";
+
+                        document.getElementById("box").style.backgroundImage='url("'+b_pic[sub]+'")'
+
+
+                        var left=data["HeWeather data service 3.0"][0].now.hum;
+                        document.getElementById("left").innerHTML="湿度 "+left+"%";
+                        var right=data["HeWeather data service 3.0"][0].now.wind.dir;
+                        var right2=data["HeWeather data service 3.0"][0].now.wind.sc;
+                        document.getElementById("right").innerHTML=right+right2+"级";
+
+                        var tim1=data["HeWeather data service 3.0"][0].daily_forecast[0].date;
+                        document.getElementById("tim1").innerHTML=tim1;
+                        var pic1=wicon[data["HeWeather data service 3.0"][0].daily_forecast[0].cond.txt_d];
+                        document.getElementById("pic1").innerHTML='<img src="'+pic1+'">';
+                        var h1=data["HeWeather data service 3.0"][0].daily_forecast[0].cond.txt_d;
+                        document.getElementById("h1").innerHTML=h1;
+                        var max1=data["HeWeather data service 3.0"][0].daily_forecast[0].tmp.max;
+                        var min1=data["HeWeather data service 3.0"][0].daily_forecast[0].tmp.min;
+                        var wind1=data["HeWeather data service 3.0"][0].daily_forecast[0].wind.dir;
+                        document.getElementById("wd1").innerHTML=min1+"~"+max1+"°"+" "+wind1;
+
+                        var tim2=data["HeWeather data service 3.0"][0].daily_forecast[1].date;
+                        document.getElementById("tim2").innerHTML=tim2;
+                        var pic2=wicon[data["HeWeather data service 3.0"][0].daily_forecast[1].cond.txt_d];
+                        document.getElementById("pic2").innerHTML='<img src="'+pic2+'">';
+                        var h2=data["HeWeather data service 3.0"][0].daily_forecast[1].cond.txt_d;
+                        document.getElementById("h2").innerHTML=h2;
+                        var max2=data["HeWeather data service 3.0"][0].daily_forecast[1].tmp.max;
+                        var min2=data["HeWeather data service 3.0"][0].daily_forecast[1].tmp.min;
+                        var wind2=data["HeWeather data service 3.0"][0].daily_forecast[1].wind.dir;
+                        document.getElementById("wd2").innerHTML=min2+"~"+max2+"°"+" "+wind2;
+
+                        var tim3=data["HeWeather data service 3.0"][0].daily_forecast[2].date;
+                        document.getElementById("tim3").innerHTML=tim3;
+                        var pic3=wicon[data["HeWeather data service 3.0"][0].daily_forecast[2].cond.txt_d];
+                        document.getElementById("pic3").innerHTML='<img src="'+pic3+'">';
+                        var h3=data["HeWeather data service 3.0"][0].daily_forecast[2].cond.txt_d;
+                        document.getElementById("h3").innerHTML=h3;
+                        var max3=data["HeWeather data service 3.0"][0].daily_forecast[2].tmp.max;
+                        var min3=data["HeWeather data service 3.0"][0].daily_forecast[2].tmp.min;
+                        var wind3=data["HeWeather data service 3.0"][0].daily_forecast[2].wind.dir;
+                        document.getElementById("wd3").innerHTML=min3+"~"+max3+"°"+" "+wind3;
+
+                        var tim4=data["HeWeather data service 3.0"][0].daily_forecast[3].date;
+                        document.getElementById("tim4").innerHTML=tim4;
+                        var pic4=wicon[data["HeWeather data service 3.0"][0].daily_forecast[3].cond.txt_d];
+                        document.getElementById("pic4").innerHTML='<img src="'+pic4+'">';
+                        var h4=data["HeWeather data service 3.0"][0].daily_forecast[3].cond.txt_d;
+                        document.getElementById("h4").innerHTML=h4;
+                        var max4=data["HeWeather data service 3.0"][0].daily_forecast[3].tmp.max;
+                        var min4=data["HeWeather data service 3.0"][0].daily_forecast[3].tmp.min;
+                        var wind4=data["HeWeather data service 3.0"][0].daily_forecast[3].wind.dir;
+                        document.getElementById("wd4").innerHTML=min4+"~"+max4+"°"+" "+wind4;
+
+                        var tim5=data["HeWeather data service 3.0"][0].daily_forecast[4].date;
+                        document.getElementById("tim5").innerHTML=tim5;
+                        var pic5=wicon[data["HeWeather data service 3.0"][0].daily_forecast[4].cond.txt_d];
+                        document.getElementById("pic5").innerHTML='<img src="'+pic5+'">';
+                        var h5=data["HeWeather data service 3.0"][0].daily_forecast[4].cond.txt_d;
+                        document.getElementById("h5").innerHTML=h5;
+                        var max5=data["HeWeather data service 3.0"][0].daily_forecast[4].tmp.max;
+                        var min5=data["HeWeather data service 3.0"][0].daily_forecast[4].tmp.min;
+                        var wind5=data["HeWeather data service 3.0"][0].daily_forecast[4].wind.dir;
+                        document.getElementById("wd5").innerHTML=min5+"~"+max5+"°"+" "+wind5;
+
+
+
+                    };
+                };
+                xhr.setRequestHeader("apikey","305ea943179d765ab8a5c066d5849f5a")
+                xhr.send(null);
+                var b_pic={
+                    "晴":"weather/qt.jpg",
+                    "多云":"weather/yt.jpg",
+                    "阴":"weather/yt.jpg",
+                    "阵雨":"weather/xy.gif",
+                    "雷阵雨":"weather/xy.gif",
+                    "雷阵雨并伴有冰雹":"weather/xy.gif",
+                    "雨夹雪":"weather/xy.gif",
+                    "小雨":"weather/xy.gif",
+                    "中雨":"weather/xy.gif",
+                    "大雨":"weather/xy.gif",
+                    "暴雨":"weather/xy.gif",
+                    "大暴雨":"weather/xy.gif",
+                    "特大暴雨":"weather/xy.gif",
+                    "阵雪":"weather/xx.gif",
+                    "小雪":"weather/xx.gif",
+                    "中雪":"weather/xx.gif",
+                    "大雪":"weather/xx.gif",
+                    "暴雪":"weather/xx.gif",
+                    "雾":"weather/xx.gif",
+                    "冻雨":"weather/xx.gif",
+                    "沙尘暴":"weather/xx.gif",
+                    "小到中雨":"weather/xx.gif",
+                    "中到大雨":"weather/xx.gif",
+                    "大到暴雪":"weather/xx.gif",
+                    "暴雨到大暴雨":"weather/xy.gif",
+                    "大暴雨到特大暴雨":"weather/xy.gif",
+                    "小到中雪":"weather/xx.gif",
+                    "中到大雪":"weather/xx.gif",
+                    "大到暴雪":"weather/xx.gif",
+                    "浮沉":"weather/yt.jpg",
+                    "扬沙":"weather/yt.jpg",
+                    "强沙尘暴":"weather/yt.jpg"
+                };
+                var wicon={
+                    "晴":"weather/icon_01.png",
+                    "多云":"weather/icon_02.png",
+                    "阴":"weather/icon_03.png",
+                    "阵雨":"weather/icon_08.png",
+                    "雷阵雨":"weather/icon_07.png",
+                    "雷阵雨并伴有冰雹":"weather/icon_05.png",
+                    "雨夹雪":"weather/icon_13.png",
+                    "小雨":"weather/icon_07.png",
+                    "中雨":"weather/icon_09.png",
+                    "大雨":"weather/icon_10.png",
+                    "暴雨":"weather/icon_11.png",
+                    "大暴雨":"weather/icon_12.png",
+                    "特大暴雨":"weather/icon_12.png",
+                    "阵雪":"weather/icon_14.png",
+                    "小雪":"weather/icon_15.png",
+                    "中雪":"weather/icon_16.png",
+                    "大雪":"weather/icon_17.png",
+                    "暴雪":"weather/icon_18.png",
+                    "雾":"weather/icon_04.png",
+                    "冻雨":"weather/icon_08.png",
+                    "沙尘暴":"weather/icon_06.png",
+                    "小到中雨":"weather/icon_09.png",
+                    "中到大雨":"weather/icon_10.png",
+                    "大到暴雪":"weather/icon_11.png",
+                    "暴雨到大暴雨":"weather/icon_12.png",
+                    "大暴雨到特大暴雨":"weather/icon_12.png",
+                    "小到中雪":"weather/icon_14.png",
+                    "中到大雪":"weather/icon_15.png",
+                    "大到暴雪":"weather/icon_16.png",
+                    "浮沉":"weather/icon_06.png",
+                    "扬沙":"weather/icon_06.png",
+                    "强沙尘暴":"weather/icon_06.png"
+                };
+            }
+            run();
+            document.getElementById("btn").onclick = function () {
+                run();
+            };
+        };
+    </script>
+</head>
+<body>
+<div id="box">
+    <div class="header">
+        <span>选择城市</span>
+        <select id="city">
+            <option>北京</option>
+            <option>上海</option>
+            <option>广州</option>
+            <option>深圳</option>
+            <option>合肥</option>
+            <option>三亚</option>
+            <option>沈阳</option>
+            <option>哈尔滨</option>
+            <option>呼和浩特</option>
+            <option>成都</option>
+            <option>邯郸</option>
+            <option>郑州</option>
+            <option>西宁</option>
+            <option>青岛</option>
+            <option>大连</option>
+            <option>济南</option>、
+            <option>长春</option>
+            <option>兰州</option>
+            <option>张家界</option>
+            <option>长沙</option>
+            <option>南阳</option>
+            <option>信阳</option>
+            <option>安阳</option>
+            <option>贵阳</option>
+            <option>四平</option>
+            <option>攀枝花</option>
+            <option>大庆</option>
+            <option>牡丹江</option>
+            <option>鸡西</option>
+            <option>七台河</option>
+            <option>重庆</option>
+            <option>天津</option>
+            <option>福州</option>
+            <option>三门峡</option>
+            <option>广元</option>
+            <option>绵阳</option>
+        </select>
+        <button id="btn">更换</button>
+    </div>
+    <div class="today">
+        <h3 id="area"></h3>
+        <h5 id="time"></h5>
+        <h4 id="quality"></h4>
+        <h2 id="tmp"></h2>
+        <p><i id="left"></i> &nbsp; <i id="right"></i></p>
+    </div>
+    <div class="footer">
+        <div class="tomorrow">
+            <p id="tim1">今天 9月9日</p>
+            <div class="pic" id="pic1"><img src="weather/icon_01.png"></div>
+            <h6 id="h1">多云</h6>
+            <div class="wendu" id="wd1">19~31°3-4 级</div>
+        </div>
+        <div class="tomorrow">
+            <p id="tim2">今天 9月9日</p>
+            <div class="pic" id="pic2"><img src="weather/icon_01.png"></div>
+            <h6 id="h2">多云</h6>
+            <div class="wendu" id="wd2">19~31°3-4 级</div>
+        </div>
+        <div class="tomorrow">
+            <p id="tim3">今天 9月9日</p>
+            <div class="pic" id="pic3"><img src="weather/icon_01.png"></div>
+            <h6 id="h3">多云</h6>
+            <div class="wendu" id="wd3">19~31°3-4 级</div>
+        </div>
+        <div class="tomorrow">
+            <p id="tim4">今天 9月9日</p>
+            <div class="pic" id="pic4"><img src="weather/icon_01.png"></div>
+            <h6 id="h4">多云</h6>
+            <div class="wendu" id="wd4">19~31°3-4 级</div>
+        </div>
+        <div class="tomorrow">
+            <p id="tim5">今天 9月9日</p>
+            <div class="pic" id="pic5"><img src="weather/icon_01.png"></div>
+            <h6 id="h5">多云</h6>
+            <div class="wendu" id="wd5">19~31°3-4 级</div>
+        </div>
+    </div>
+    <div id="loading"><img src="weather/ajax-loader.gif"></div>
+</div>
+
+
+<!--<div id="loading"><img src="weather/ajax-loader.gif"></div>-->
+<!--<div id="result"></div>-->
+</body>
+</html>
